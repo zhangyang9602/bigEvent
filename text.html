@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <header>
+        这是一个头部
+    </header>
+    <footer>
+        这是一个尾部
+    </footer>
+    <nav>这是一个导航栏</nav>
+    电话<input type="tel">
+    时间<input type="time">
+    邮箱<input type="email">
+    数字<input type="number">
+    时间<input type="date">
+    <audio src="">音频</audio>
+    <video src="">视频</video>
+    <section></section>
+    <script>
+        function Cat(name) {
+            this.name = name;
+        }
+        Cat.prototype.name = '你好';
+        Cat.prototype.say = function () {
+            console.log('你好');
+        }
+        console.dir(Cat);
+        var cat = new Cat('小白');
+        console.log(cat.name);
+        cat.say();
+        console.log(window.outerWidth);
+        console.log(window.outerHeight);
+        console.log('appName = ' + navigator.appName);//浏览器名称
+        console.log('appVersion = ' + navigator.appVersion);//浏览器版本
+        console.log('language = ' + navigator.language);//浏览器设置的语言
+        console.log('platform = ' + navigator.platform);//操作系统的类型
+        console.log('userAgent = ' + navigator.userAgent);
+        // window.location.assign('www.baidu.com');
+        // window.location.href='https://www.baidu.com';
+        console.log(window.screen.width);
+        console.log(window.screen.height);
+        console.log(window.location.hash);
+    </script>
+</body>
+
+</html>

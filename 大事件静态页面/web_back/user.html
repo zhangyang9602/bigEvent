@@ -24,47 +24,118 @@
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">用户名称：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="inputEmail3" value="李思思">
+                        <input type="text" class="form-control nickname" name="username" id="inputEmail3" value="李思思">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">昵称：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="inputEmail3" value="思思">
+                        <input type="text" class="form-control username" name="nickname" id="inputEmail3" value="思思">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">邮箱：</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" id="inputEmail3" value="lisisi@126.com">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="inputPassword3" class="col-sm-2 control-label">用户图标：</label>
-                    <div class="col-sm-10">
-                        <img src="images/2.jpg" alt="" class="user_pic">
-                        <input type="file" id="exampleInputFile">
+                        <input type="text" class="form-control email" id="inputEmail3" name="email"
+                            value="lisisi@126.com">
                     </div>
                 </div>
 
                 <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-2 control-label">密码：</label>
-                        <div class="col-sm-4">
-                            <input type="password" class="form-control" id="inputEmail3" value="12345678">
-                        </div>
+                    <label for="inputPassword3" class="col-sm-2 control-label">用户图标：</label>
+                    <div class="col-sm-10">
+                        <img src="images/2.jpg" alt="" class="user_pic userPic">
+                        <input type="file" id="exampleInputFile" name="userPic">
                     </div>
-               
-    
+                </div>
+
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">密码：</label>
+                    <div class="col-sm-4">
+                        <input type="password" class="form-control password" id="inputEmail3" name="password"
+                            value="12345678">
+                    </div>
+                </div>
+
+
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-success">修改</button>
+                        <button type="submit" class="btn btn-success btn-edit">修改</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
+    <script>
+        //入口函数
+        $(function () {
+            //页面一加载发送ajax请求获取哟用户信息并显示在页面
+            $.ajax({
+                url: 'http://localhost:8080/admin/user/detail',
+                success: function (su) {
+                    console.log(su);
+                    $('.nickname').val(su.data.nickname);
+                    $('.username').val(su.data.username);
+                    $('.email').val(su.data.email);
+                    $('.password').val(su.data.password);
+                    $('.userPic').attr('src', su.data.userPic);
+                }
+            });
+            //图片预览
+            //给上传文件的input注册change事件
+            $('#exampleInputFile').change(function (e) {
+                // e.preventDefault();
+                //获取文件对象
+                var file = this.files[0];
+                // console.log(this.files);//获取的files是伪数组
+                //获取文件路径
+                var url = URL.createObjectURL(file);
+                //把获取的路径给img
+                $('.userPic').attr('src', url);
+            });
 
+
+
+
+            //给修改注册点击事件  通过formdata上传用户修改的数据
+            $('.btn-edit').on('click', function (e) {
+                //阻止默认跳转
+                e.preventDefault();
+                //创建formdata对象
+                var fd = new FormData($('form')[0]);//传入的是dom对象form
+                //发送ajax请求修改数据
+                $.ajax({
+                    type: 'post',
+                    url: 'http://localhost:8080/admin/user/edit',
+                    data: fd,
+                    //阻止设置请求头
+                    contentType: false,
+                    processData: false,
+                    success: function (su) {
+                        console.log(su);
+                        alert('修改成功')
+                        if (su.code == 200) {
+                            $.ajax({
+                                type: 'get',
+                                url: 'http://localhost:8080/admin/user/info',
+                                success: function (su) {
+                                    // console.log(su);
+                                    // parent.$('.user_info>img').html('<img src="' +su.data.userPic + '" alt="person">');
+                                    // parent.$('.user_info>span').html('<span>欢迎&nbsp;&nbsp;'+su.data.nickname + '</span>');
+                                    // parent.$('.user_center_link>a').html('<img src="'+su.data.userPic+'" alt="person">');
+                                    // ​2.把对应的信息显示在页面的对象标签上.
+                                    parent.$('.user_info>span').html('欢迎&nbsp;&nbsp;' + su.data.nickname);
+                                    parent.$('.user_info>img').attr('src', su.data.userPic);
+                                    parent.$('.user_center_link>img').attr('src', su.data.userPic);
+                                    // parent.window.location.href='index.html';
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
