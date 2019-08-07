@@ -27,19 +27,21 @@
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章标题：</label>
                     <div class="col-sm-10">
-                        <input type="email" class="form-control" id="inputEmail3" placeholder="文章标题">
+                        <input type=" " class="form-control" name="title" id="inputEmail3" placeholder="文章标题">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputPassword3" class="col-sm-2 control-label">文章封面：</label>
                     <div class="col-sm-10">
-                        <input type="file" id="exampleInputFile">
+                        <label for="exampleInputFile"><img src="./images/2.jpg" alt="" style="width:30px"></label>
+                        <input type="file" id="exampleInputFile" name="cover" style="display: none">
+                        <img src="" alt="" class="pic">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章类别：</label>
                     <div class="col-sm-4">
-                        <select class="form-control">
+                        <select class="form-control input-sm" name="categoryId">
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>
@@ -53,7 +55,7 @@
                     <div class="col-sm-4">
 
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="YYYY-MM-DD" id="dateinput">
+                            <input type="text" class="form-control" name="date" placeholder="YYYY-MM-DD" id="dateinput">
                             <span class="input-group-btn">
                                 <button class="btn btn-default" type="button"
                                     onclick="jeDate('#dateinput',{trigger:false,format: 'YYYY-MM-DD'})"><i
@@ -65,21 +67,77 @@
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章内容：</label>
                     <div class="col-sm-10">
-                        <textarea class="form-control" id="rich_content" name="content" placeholder="文章内容">
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda fugiat illo nihil molestias ab. Laborum eius non atque, totam sapiente quae obcaecati assumenda ratione inventore pariatur maiores, qui libero delectus.
+                        <textarea class="form-control" id="rich_content"  placeholder="文章内容">
+                                <p>喂喂喂</p>
                             </textarea>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-success">发布</button>
+                        <button type="submit" class="btn btn-success fabu">发布</button>
                         <button type="submit" class="btn btn-default">存为草稿</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
-
+    <!-- 导入时间格式化js -->
+    <script src="./js/moment.js"></script>
+    <!-- 导入模板js文件 -->
+    <script src="./js/template-web.js"></script>
+    <script id="temp-list" type="text/html">
+        {{each data v}}
+        <select class="form-control input-sm" name="categoryld">
+                            <option value='{{v.id}}'>{{v.name}}</option>
+                            
+                        </select>
+        {{/each}}
+    </script>
+    <script>
+        //页面一加载获取获取类别名称
+        $.ajax({
+            type: 'get',
+            url: 'http://localhost:8080/admin/category/list',
+            //调用模板的核心方法
+            success: function (su) {
+                // console.log(su);
+                var temp = template('temp-list', su);
+                $('.input-sm').html(temp);
+            }
+        });
+        //预览图片
+        $('#exampleInputFile').change(function(e){
+            e.preventDefault();
+            var file=this.files[0];
+            var url=URL.createObjectURL(file);
+            $('.pic').attr('src',url);
+        });
+        //页面一加载获取当前时间设置给input文本框
+        var time=moment().format("YYYY-MM-DD");
+        $('#dateinput').val(time);
+        //获取富文本内容
+       
+        //给发表按钮注册点击事件
+        $('.fabu').on('click',function(e){
+            e.preventDefault();
+            //通过formData发送数据
+            var fd=new FormData($('form')[0]);
+            fd.append('content',tinyMCE.activeEditor.getContent());
+            fd.append('state','已发布');
+            //发送ajax请求
+            $.ajax({
+                type:'post',
+                url:'http://localhost:8080/admin/article/publish',
+                data:fd,
+                contentType:false,
+                processData:false,
+                success:function(su){
+                    console.log(su);
+                    alert('发布成功');
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
